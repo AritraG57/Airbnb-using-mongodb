@@ -69,7 +69,7 @@ exports.postEditHomes = (req,res,next) => {
     req.body.homename,
     req.body.rating,
     req.body.price,
-    req.body.id,
+    req.body._id,
     req.body.description
   );
   home.save().then(()=> {

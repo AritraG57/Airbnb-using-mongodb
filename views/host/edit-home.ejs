@@ -12,7 +12,7 @@
 </div>
       <form action="/<%= editing ? 'edit-home':'home-added' %>" method="POST" class="space-y-4">
         <input type="hidden" value="<%= editing ? home._id : '' %>"
-        name="id" >
+        name="_id" >
         <input
           type="text"
           name="homename"

@@ -8,7 +8,7 @@ class Home {
     this.price = price;
     this.image = image;
     this.rating = rating;
-    if(this._id) {
+    if(_id) {
       this._id = _id;
     }
     
@@ -22,10 +22,10 @@ class Home {
         homename :this.homename,
         price : this.price,
         rating : this.rating,
-        photo : this.photo,
+        image : this.image,
         description : this.description
       };
-      db.collection("homes").updateOne({_id : new ObjectId(String(this._id))},{$set : updateFields});
+      return db.collection("homes").updateOne({_id : new ObjectId(String(this._id))},{$set : updateFields});
     }
     else {//insert
       return db.collection("homes").insertOne(this);
