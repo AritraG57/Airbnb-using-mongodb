@@ -34,14 +34,24 @@ exports.getHomeDetails = (req, res, next) => {
 };
 
 exports.getAddToFavourites = (req, res, next) => {
+  
   favourite
     .getFavourites()
-    .then(([favourites]) => {
-      res.render("store/favourites", {
-          registeredHomes: favourites,
+    .then((favourites) => {
+      favourites = favourites.map(fav => fav.houseId);
+      
+      home.fetchAll().then((registeredHomes)=> {
+        const favouriteHomes = registeredHomes.filter((home)=> {
+          return favourites.includes(home._id.toString());
+        })
+        
+        res.render("store/favourites", {
+          registeredHomes: favouriteHomes,
           pageTitle: "Favourites",
           currentPage: "favourites",
         });
+      })
+      
     })
     .catch(err => {
       console.log("Error occurred during getAddToFavourites", err);
@@ -50,12 +60,16 @@ exports.getAddToFavourites = (req, res, next) => {
 
 
 exports.postAddToFavourites = (req, res, next) => {
-  //   console.log("Came to ", req.body);
-  favourite.addToFavourites(req.body.id).then(()=> {
-    res.redirect("/favourites");
+  const homeId = req.body.id;
+  const fav = new favourite(homeId);
+  fav.save().then((result)=> {
+    // console.log("fav added: ",result);
   }).catch((err)=> {
     console.log("Error occured in postAddToFavourites",err);
-  })
+  }).finally(()=> {
+    res.redirect("/favourites");
+  });
+  
 };
 
 exports.postDeleteFavourites = (req, res, next) => {

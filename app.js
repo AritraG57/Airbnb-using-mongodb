@@ -30,7 +30,7 @@ app.use(hostRouter);
 app.use(error);
 
 
-const PORT = 3000;
+const PORT = 3001;
 
 mongoConnect(()=> {
     

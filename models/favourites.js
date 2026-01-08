@@ -1,26 +1,30 @@
-const db = require('../utils/databaseUtil');
-module.exports = class favourite {
-  static addToFavourites = (homeId) => {
-    return db.execute("INSERT INTO favourites (id) VALUES (?)",
-        [homeId]);
-  };
+const { ObjectId } = require("mongodb");
+const { getDb } = require("../utils/databaseUtil");
 
-  static getFavourites = () => {
-    return db.execute(`SELECT homes.*
-    FROM homes
-    INNER JOIN favourites
-    ON homes.id = favourites.id`);
-  };
+module.exports = class Favourite {
+  constructor(houseId) {
+    this.houseId = houseId;
+  }
+  save() {
+    const db = getDb();
+    return db
+      .collection("favourites")
+      .findOne({ houseId: this.houseId })
+      .then((existingFav) => {
+        if (!existingFav) {
+          return db.collection("favourites").insertOne(this);
+        }
+        return Promise.resolve();
+      });
+  }
 
-  static deleteFromFavourites = (homeId) => {
-    return db.execute("DELETE from favourites WHERE id = ?",[homeId]);
-      
+  static getFavourites() {
+    const db = getDb();
+    return db.collection("favourites").find().toArray();
+  }
+
+  static deleteFromFavourites(homeId) {
+    const db = getDb();
+    return db.collection("favourites").deleteOne({ houseId: homeId });
+  }
 };
-
-static getFavHomeWithDetails() {
-  return db.execute(`SELECT homes.*
-    FROM homes
-    INNER JOIN favourites
-    ON homes.id = favourites.id`);
-}
-}
